@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset name="dokk1">
-    <description>PHP CodeSniffer configuration for itk-dev/gdpr-bundle</description>
+    <description>PHP CodeSniffer configuration for itk-dev/terms-bundle</description>
 
-    <file>ItkDevGDPRBundle.php</file>
+    <file>ItkDevTermsBundle.php</file>
     <file>Controller</file>
     <file>DependencyInjection</file>
     <file>EventSubscriber</file>

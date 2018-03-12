@@ -1,26 +1,26 @@
 <?php
 
 /*
- * This file is part of itk-dev/gdpr-bundle.
+ * This file is part of itk-dev/terms-bundle.
  *
  * (c) 2018 ITK Development
  *
  * This source file is subject to the MIT license.
  */
 
-namespace ItkDev\GDPRBundle\EventSubscriber;
+namespace ItkDev\TermsBundle\EventSubscriber;
 
-use AppBundle\Entity\User;
+use FOS\UserBundle\Model\User;
+use ItkDev\TermsBundle\Helper\TermsHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
-class GDPRSubscriber implements EventSubscriberInterface
+class TermsSubscriber implements EventSubscriberInterface
 {
     /** @var RequestStack */
     private $requestStack;
@@ -28,32 +28,27 @@ class GDPRSubscriber implements EventSubscriberInterface
     /** @var TokenStorage */
     private $tokenStorage;
 
-    /** @var RouterInterface */
-    private $router;
-
-    /** @var array */
-    private $configuration;
+    /** @var \ItkDev\TermsBundle\Helper\TermsHelper */
+    private $helper;
 
     public function __construct(
         RequestStack $requestStack,
         TokenStorage $tokenStorage,
-        RouterInterface $router,
-        array $configuration
+        TermsHelper $helper
     ) {
         $this->requestStack = $requestStack;
         $this->tokenStorage = $tokenStorage;
-        $this->router = $router;
-        $this->configuration = $configuration;
+        $this->helper = $helper;
     }
 
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'checkGDPRrequest',
+            KernelEvents::REQUEST => 'checkTermsrequest',
         ];
     }
 
-    public function checkGDPRrequest(GetResponseEvent $event)
+    public function checkTermsrequest(GetResponseEvent $event)
     {
         if (HttpKernel::MASTER_REQUEST !== $event->getRequestType()) {
             // don't do anything if it's not the master request
@@ -66,33 +61,27 @@ class GDPRSubscriber implements EventSubscriberInterface
         }
 
         $request = $this->requestStack->getCurrentRequest();
+        if (null === $request) {
+            return;
+        }
 
-        if (null === $request || 'GET' !== $request->getMethod()) {
+        // Skip check on terms routes (user must be able to perform a request
+        // that saves his accept of Terms).
+        if (\in_array($request->get('_route'), ['itk_dev_terms_show', 'itk_dev_terms_accept'], true)) {
             return;
         }
 
         $user = $token->getUser();
-        if ($user instanceof User && null === $user->getGdprAcceptedAt()) {
-            $redirectUrl = null;
-            if (isset($this->configuration['accept_route'])) {
-                $routeName = $this->configuration['accept_route'];
-                $routeParameters = isset($this->configuration['accept_route_parameters'])
-                    ? $this->configuration['accept_route_parameters'] : [];
-                $redirectUrl = $this->router->generate($routeName, $routeParameters);
-            } elseif (isset($this->configuration['accept_url'])) {
-                $redirectUrl = $this->configuration['accept_url'];
-            }
-
-            if (null === $redirectUrl) {
-                throw new \RuntimeException('GDPR not configured correctly.');
-            }
+        if ($user instanceof User && !$this->helper->isTermsAccepted($user)) {
+            $redirectUrl = $this->helper->getRedirectUrl();
 
             $currentPath = $request->getPathInfo();
             $redirectInfo = parse_url($redirectUrl);
 
-            $onRedirectUrl = $redirectInfo['path'] === $currentPath;
+            // Only redirect if not already on redirect target path.
+            $doRedirect = $redirectInfo['path'] !== $currentPath;
 
-            if (!$onRedirectUrl) {
+            if ($doRedirect) {
                 // Add current url to redirect url.
                 $referrer = $request->getPathInfo();
                 if (null !== $request->getQueryString()) {

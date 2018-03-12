@@ -1,64 +1,49 @@
 <?php
 
 /*
- * This file is part of itk-dev/gdpr-bundle.
+ * This file is part of itk-dev/terms-bundle.
  *
  * (c) 2018 ITK Development
  *
  * This source file is subject to the MIT license.
  */
 
-namespace ItkDev\GDPRBundle\Controller;
+namespace ItkDev\TermsBundle\Controller;
 
-use AppBundle\Service\UserManager;
-use FOS\UserBundle\Model\UserManagerInterface;
+use ItkDev\TermsBundle\Helper\TermsHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class GDPRController extends Controller
+class TermsController extends Controller
 {
     /** @var TokenStorageInterface */
     private $tokenStorage;
 
-    /** @var UserManager */
-    private $userManager;
-
-    /** @var PropertyAccessor */
-    private $accessor;
-
-    /** @var array */
-    private $configuration;
+    /** @var \ItkDev\TermsBundle\Helper\TermsHelper */
+    private $helper;
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        UserManagerInterface $userManager,
-        PropertyAccessor $accessor,
-        array $configuration
+        TermsHelper $helper
     ) {
         $this->tokenStorage = $tokenStorage;
-        $this->userManager = $userManager;
-        $this->accessor = $accessor;
-        $this->configuration = $configuration;
-        header('Content-type: text/plain');
-        echo var_export($configuration, true);
-        die(__FILE__.':'.__LINE__.':'.__METHOD__);
+        $this->helper = $helper;
     }
 
     public function showAction(Request $request)
     {
-        $form = $this->createGDPRForm($request->get('referrer'));
+        $form = $this->createTermsForm($request->get('referrer'));
 
-        return $this->render('ItkDevGDPRBundle:Default:index.html.twig', ['form' => $form->createView()]);
+        return $this->render('ItkDevTermsBundle:Default:index.html.twig', ['form' => $form->createView()]);
     }
 
     public function acceptAction(Request $request)
     {
-        $form = $this->createGDPRForm();
+        $form = $this->createTermsForm();
 
         $form->handleRequest($request);
 
@@ -66,11 +51,7 @@ class GDPRController extends Controller
             $token = $this->tokenStorage->getToken();
             if (null !== $token) {
                 $user = $token->getUser();
-                $property = $this->configuration['user_gdpr_property'];
-                $value = new \DateTime();
-                $this->accessor->setValue($user, $property, $value);
-                $user->setGdprAcceptedAt(new \DateTime());
-                $this->userManager->updateUser($user);
+                $this->helper->setTermsAccepted($user);
 
                 $referrer = $form->get('referrer')->getData();
 
@@ -81,14 +62,14 @@ class GDPRController extends Controller
         return $this->showAction();
     }
 
-    private function createGDPRForm($referrer = null)
+    private function createTermsForm($referrer = null)
     {
         return $this->createFormBuilder(['referrer' => $referrer])
-            ->setAction($this->generateUrl('itk_dev_gdpr_accept'))
+            ->setAction($this->generateUrl('itk_dev_terms_accept'))
             ->setMethod('POST')
             ->add('accept', CheckboxType::class, [
                 'required' => true,
-                'label' => 'Accept GDPR',
+                'label' => 'Accept Terms',
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Accept',

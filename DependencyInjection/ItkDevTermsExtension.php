@@ -1,17 +1,16 @@
 <?php
 
 /*
- * This file is part of itk-dev/gdpr-bundle.
+ * This file is part of itk-dev/terms-bundle.
  *
  * (c) 2018 ITK Development
  *
  * This source file is subject to the MIT license.
  */
 
-namespace ItkDev\GDPRBundle\DependencyInjection;
+namespace ItkDev\TermsBundle\DependencyInjection;
 
-use ItkDev\GDPRBundle\Controller\GDPRController;
-use ItkDev\GDPRBundle\EventSubscriber\GDPRSubscriber;
+use ItkDev\TermsBundle\Helper\TermsHelper;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -22,7 +21,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  *
  * @see http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
-class ItkDevGDPRExtension extends Extension
+class ItkDevTermsExtension extends Extension
 {
     /**
      * {@inheritdoc}
@@ -35,10 +34,7 @@ class ItkDevGDPRExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $definition = $container->getDefinition(GDPRSubscriber::class);
-        $definition->replaceArgument('$configuration', $config);
-
-        $definition = $container->getDefinition(GDPRController::class);
+        $definition = $container->getDefinition(TermsHelper::class);
         $definition->replaceArgument('$configuration', $config);
     }
 }

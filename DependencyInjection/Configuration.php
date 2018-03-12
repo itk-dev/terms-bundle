@@ -1,14 +1,14 @@
 <?php
 
 /*
- * This file is part of itk-dev/gdpr-bundle.
+ * This file is part of itk-dev/terms-bundle.
  *
  * (c) 2018 ITK Development
  *
  * This source file is subject to the MIT license.
  */
 
-namespace ItkDev\GDPRBundle\DependencyInjection;
+namespace ItkDev\TermsBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -26,14 +26,14 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('itk_dev_gdpr');
+        $rootNode = $treeBuilder->root('itk_dev_terms');
 
         $rootNode
             ->children()
                 ->scalarNode('accept_url')->end()
-                ->scalarNode('accept_route')->defaultValue('itk_dev_gdpr_show')->end()
+                ->scalarNode('accept_route')->defaultValue('itk_dev_terms_show')->end()
                 ->variableNode('accept_route_parameters')->end()
-                ->scalarNode('user_gdpr_property')->defaultValue('gdprAcceptedAt')->end()
+                ->scalarNode('user_terms_property')->defaultValue('termsAcceptedAt')->end()
             ->end();
 
         return $treeBuilder;

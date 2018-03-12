@@ -4,11 +4,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="itk_dev_gdpr_show" path="/show" methods="GET">
-        <default key="_controller">ItkDevGDPRBundle:GDPR:show</default>
+    <route id="itk_dev_terms_show" path="/show" methods="GET">
+        <default key="_controller">ItkDevTermsBundle:Terms:show</default>
     </route>
 
-    <route id="itk_dev_gdpr_accept" path="/accept" methods="POST">
-        <default key="_controller">ItkDevGDPRBundle:GDPR:accept</default>
+    <route id="itk_dev_terms_accept" path="/accept" methods="POST">
+        <default key="_controller">ItkDevTermsBundle:Terms:accept</default>
     </route>
 </routes>
