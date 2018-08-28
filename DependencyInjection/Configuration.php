@@ -30,6 +30,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->scalarNode('path')->defaultValue('^/admin')->end()
                 ->scalarNode('accept_url')->end()
                 ->scalarNode('accept_route')->defaultValue('itk_dev_terms_show')->end()
                 ->variableNode('accept_route_parameters')->end()

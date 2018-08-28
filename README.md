@@ -34,3 +34,6 @@ bin/console config:dump-reference ItkDevTermsBundle
 
 If the default configuration does not match your setup it can be
 modified in `app/config/config.yml`.
+
+Make sure that `itk_dev_terms.path` is set correctly to match your
+setup.

@@ -41,6 +41,11 @@ class TermsHelper
         $this->configuration = $configuration;
     }
 
+    public function getPath()
+    {
+        return $this->configuration['path'];
+    }
+
     public function isTermsAccepted(UserInterface $user)
     {
         $property = $this->getTermsAcceptedProperty();
@@ -51,7 +56,7 @@ class TermsHelper
     public function setTermsAccepted(UserInterface $user)
     {
         $property = $this->getTermsAcceptedProperty();
-        $value = $this->getTermsAcceptedAcceptedValue();
+        $value = $this->getTermsAcceptedValue();
         $this->accessor->setValue($user, $property, $value);
         $this->userManager->updateUser($user);
     }
@@ -84,7 +89,7 @@ class TermsHelper
         return $this->configuration['user_terms_property'];
     }
 
-    private function getTermsAcceptedAcceptedValue()
+    private function getTermsAcceptedValue()
     {
         return new \DateTime();
     }

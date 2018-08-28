@@ -65,6 +65,13 @@ class TermsSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $path = $this->helper->getPath();
+        $currentPath = $request->getPathInfo();
+
+        if (!preg_match('@'.$path.'@', $currentPath)) {
+            return;
+        }
+
         // Skip check on terms routes (user must be able to perform a request
         // that saves his accept of Terms).
         if (\in_array($request->get('_route'), ['itk_dev_terms_show', 'itk_dev_terms_accept'], true)) {
