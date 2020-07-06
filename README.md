@@ -3,22 +3,21 @@
 ## Installation
 
 ```sh
-composer require itk-dev/terms-bundle dev-master
+composer require itk-dev/terms-bundle:4.x-dev
 ```
 
-Enable the bundle in `app/AppKernel.php`:
+Enable the bundle in `config/bundles.php`:
 
 ```php
-public function registerBundles() {
-    $bundles = [
-        // …
-        new ItkDev\TermsBundle\ItkDevTermsBundle(),
-    ];
-    // …
-}
+<?php
+
+return [
+    …,
+    ItkDev\TermsBundle\ItkDevTermsBundle::class => ['all' => true],
+];
 ```
 
-Add routes in `app/config/routing.yml', say:
+Add routes in `config/routes/terms_bundle.yaml`, say:
 
 ```yaml
 terms_bundle:
@@ -26,14 +25,52 @@ terms_bundle:
     prefix: /terms
 ```
 
+## Configuration
+
 Check default bundle configuration
 
 ```sh
 bin/console config:dump-reference ItkDevTermsBundle
 ```
 
-If the default configuration does not match your setup it can be
-modified in `app/config/config.yml`.
+Make any necessary changes in `config/packages/terms_bundle.yaml`, say.
 
-Make sure that `itk_dev_terms.path` is set correctly to match your
-setup.
+**Important**: Make sure that `itk_dev_terms.path` is set correctly to match
+your setup.
+
+Add a `termsAcceptedAt` (or whatever you've set
+`itk_dev_terms.user_terms_property` to) property to your `User` entity, e.g.
+
+```php
+    /**
+     * @var \DateTime
+     * @ORM\Column(name="terms_accepted_at", type="datetime", nullable=true)
+     */
+    protected $termsAcceptedAt;
+```
+
+## Displaying terms and conditions
+
+Set the config parameter `itk_dev_terms.user_terms_content_path` to a `twig`
+template file containing your actual terms and conditions, e.g.
+
+```
+# .env.local
+TERMS_CONTENT_PATH='%kernel.project_dir%/misc/terms/content.html.twig'
+
+# config/packages/itk_dev_terms_bundle.yaml
+itk_dev_terms:
+    path: ^/
+    user_terms_content_path: '%env(resolve:TERMS_CONTENT_PATH)%'
+```
+
+Override the default terms template and use `terms_render()` to render the terms
+template.
+
+```twig
+# templates/bundles/ItkDevTermsBundle/Default/index.html.twig
+
+<div class="terms">
+  {{ terms_render() }}
+</div>
+```

@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <title>{% block title %}Terms{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
     </head>
     <body>
         {% block content %}
@@ -13,5 +14,7 @@
                 {{ form(form) }}
             {% endblock %}
         {% endblock %}
+
+        {% block javascripts %}{% endblock %}
     </body>
 </html>

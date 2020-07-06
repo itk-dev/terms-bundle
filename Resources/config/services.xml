@@ -22,6 +22,13 @@
         <service id="ItkDev\TermsBundle\Controller\TermsController">
             <argument key="$tokenStorage" id="security.token_storage" type="service"/>
             <argument key="$helper" id="ItkDev\TermsBundle\Helper\TermsHelper" type="service"/>
+            <tag name="controller.service_arguments"/>
+        </service>
+
+        <service id="ItkDev\TermsBundle\Twig\TermsExtension">
+            <argument key="$twig" id="twig" type="service"/>
+            <argument key="$configuration"/>
+            <tag name="twig.extension"/>
         </service>
     </services>
 </container>

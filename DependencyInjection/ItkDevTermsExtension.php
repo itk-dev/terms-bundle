@@ -11,6 +11,7 @@
 namespace ItkDev\TermsBundle\DependencyInjection;
 
 use ItkDev\TermsBundle\Helper\TermsHelper;
+use ItkDev\TermsBundle\Twig\TermsExtension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -35,6 +36,9 @@ class ItkDevTermsExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $definition = $container->getDefinition(TermsHelper::class);
+        $definition->replaceArgument('$configuration', $config);
+
+        $definition = $container->getDefinition(TermsExtension::class);
         $definition->replaceArgument('$configuration', $config);
     }
 }

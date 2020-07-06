@@ -38,7 +38,7 @@ class TermsController extends Controller
     {
         $form = $this->createTermsForm($request->get('referrer'));
 
-        return $this->render('ItkDevTermsBundle:Default:index.html.twig', ['form' => $form->createView()]);
+        return $this->render('@ItkDevTerms/Default/index.html.twig', ['form' => $form->createView()]);
     }
 
     public function acceptAction(Request $request)

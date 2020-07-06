@@ -19,6 +19,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class TermsSubscriber implements EventSubscriberInterface
 {
@@ -33,7 +34,7 @@ class TermsSubscriber implements EventSubscriberInterface
 
     public function __construct(
         RequestStack $requestStack,
-        TokenStorage $tokenStorage,
+        TokenStorageInterface $tokenStorage,
         TermsHelper $helper
     ) {
         $this->requestStack = $requestStack;
@@ -44,11 +45,11 @@ class TermsSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'checkTermsrequest',
+            KernelEvents::REQUEST => 'checkTermsRequest',
         ];
     }
 
-    public function checkTermsrequest(GetResponseEvent $event)
+    public function checkTermsRequest(GetResponseEvent $event)
     {
         if (HttpKernel::MASTER_REQUEST !== $event->getRequestType()) {
             // don't do anything if it's not the master request

@@ -35,6 +35,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('accept_route')->defaultValue('itk_dev_terms_show')->end()
                 ->variableNode('accept_route_parameters')->end()
                 ->scalarNode('user_terms_property')->defaultValue('termsAcceptedAt')->end()
+                ->scalarNode('user_terms_content_path')->defaultValue('../vendor/itk-dev/terms-bundle/Resources/terms/content.html.twig')->end()
             ->end();
 
         return $treeBuilder;

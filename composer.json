@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "symfony/symfony": "^3.0",
+        "symfony/framework-bundle": "^4.0",
+        "symfony/twig-pack": "*",
         "friendsofsymfony/user-bundle": "^2.0"
     },
     "autoload": {
